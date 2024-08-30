@@ -26,46 +26,67 @@ function makeMove(column, player) {
 }
 
 function checkForWin(player) {
-  // Function to check for a winning condition
-  function checkForWin(board, player) {
-    const checkDirection = (row, col, dRow, dCol) => {
-      let count = 0;
-      while (row >= 0 && row < board.length && col >= 0 && col < board[0].length && board[row][col] === player.token) {
-        count++;
-        row += dRow;
-        col += dCol;
-      }
-      return count;
-    };
-
-    const directions = [
-      [0, 1],     // horizontal
-      [1, 0],     // vertical
-      [1, 1],     // diagonal /
-      [1, -1]     // diagonal \
-    ];
-
-    for (let [dRow, dCol] of directions) {
-      let total = 1 + checkDirection(row, col - dCol, -dRow, -dCol) + checkDirection(row, col + dCol, dRow, dCol);
-      if (total >= 4) {
+  // Check horizontally
+  for (let row = 0; row < 6; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (board[row][col] === player &&
+        board[row][col + 1] === player &&
+        board[row][col + 2] === player &&
+        board[row][col + 3] === player) {
         return true;
       }
     }
-
-    return false;
   }
+
+  // Check vertically
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 7; col++) {
+      if (board[row][col] === player &&
+        board[row + 1][col] === player &&
+        board[row + 2][col] === player &&
+        board[row + 3][col] === player) {
+        return true;
+      }
+    }
+  }
+
+  // Check diagonally (from bottom left to top right)
+  for (let row = 3; row < 6; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (board[row][col] === player &&
+        board[row - 1][col + 1] === player &&
+        board[row - 2][col + 2] === player &&
+        board[row - 3][col + 3] === player) {
+        return true;
+      }
+    }
+  }
+
+  // Check diagonally (from top left to bottom right)
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 4; col++) {
+      if (board[row][col] === player &&
+        board[row + 1][col + 1] === player &&
+        board[row + 2][col + 2] === player &&
+        board[row + 3][col + 3] === player) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 function checkForTie() {
-  // Function to check for a tie condition
-  function checkForTie(board) {
-    for (let row of board) {
-      if (row.includes(' ')) {
-        return false; // Empty space found, game is not a tie yet
+  for (let row of board) {
+    for (let cell of row) {
+      if (cell === ' ') {
+        return false; // The board is not full yet
       }
     }
-    return true; // Board is full, game is a tie
   }
+
+  return true; // The board is full
 }
 
 function promptForPlayerName(playerIndex, callback) {
