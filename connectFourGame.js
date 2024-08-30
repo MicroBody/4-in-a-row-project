@@ -105,14 +105,14 @@ function playerMove() {
       if (checkForWin(currentPlayer === 0 ? 'X' : 'O')) {
         displayBoard();
         console.log(`${players[currentPlayer]} wins!`);
-        rl.close();
+        promptPlayAgain();
         return;
       }
 
       if (checkForTie()) {
         displayBoard();
         console.log("It's a tie!");
-        rl.close();
+        promptPlayAgain();
         return;
       }
 
@@ -121,6 +121,19 @@ function playerMove() {
     } else {
       console.log("Invalid move. Please try again.");
       playerMove(); // Ask the same player to make a move again
+    }
+  });
+}
+
+function promptPlayAgain() {
+  rl.question("Play again? (Y/N): ", function (answer) {
+    if (answer.toLowerCase() === 'y') {
+      board = Array.from({ length: 6 }, () => Array(7).fill(' '));
+      currentPlayer = 0;
+      startGame();
+    } else {
+      console.log("Thank you for playing! Goodbye.");
+      rl.close();
     }
   });
 }
