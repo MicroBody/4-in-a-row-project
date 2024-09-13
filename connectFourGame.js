@@ -125,28 +125,64 @@ function playerMove() {
   });
 }
 
-function promptPlayAgain() {
-  rl.question("Play again? (Y/N): ", function (answer) {
-    if (answer.toLowerCase() === 'y') {
-      board = Array.from({ length: 6 }, () => Array(7).fill(' '));
-      currentPlayer = 0;
-      startGame();
-    } else {
-      console.log("Thank you for playing! Goodbye.");
-      rl.close();
-    }
-  });
-}
+document.addEventListener("DOMContentLoaded", function () {
+  const board = document.querySelector('.game-board');
+  const slots = document.querySelectorAll('.slot');
 
-function startGame() {
-  promptForPlayerName(0, function (name) {
-    players.push(name);
-    promptForPlayerName(1, function (name) {
-      players.push(name);
-      console.log(`Welcome, ${players[0]} and ${players[1]}! Let's start the game.`);
-      playerMove();
+  let currentPlayer = 1;
+
+  // Initialize the game board and set up event listeners for player moves
+  for (let i = 0; i < slots.length; i++) {
+    slots[i].addEventListener('click', function () {
+      let column = i % 7; // Get the column index
+      let row = getAvailableRow(column);
+
+      if (row !== -1) {
+        let slotIndex = row * 7 + column;
+        slots[slotIndex].classList.add('player' + currentPlayer);
+        slots[slotIndex].classList.add('drop-animation');
+
+        currentPlayer = currentPlayer === 1 ? 2 : 1; // Switch players
+
+        // Check for win or tie conditions and handle the game logic
+
+        // Remove drop animation after a delay
+        setTimeout(() => {
+          slots[slotIndex].classList.remove('drop-animation');
+        }, 500);
+      }
     });
-  });
-}
+  }
 
-startGame();
+  // Function to find the available row in the selected column
+  function getAvailableRow(column) {
+    for (let i = 5; i >= 0; i--) {
+      let slotIndex = i * 7 + column;
+      if (!slots[slotIndex].classList.contains('player1') && !slots[slotIndex].classList.contains('player2')) {
+        return i;
+
+        function promptPlayAgain() {
+          rl.question("Play again? (Y/N): ", function (answer) {
+            if (answer.toLowerCase() === 'y') {
+              board = Array.from({ length: 6 }, () => Array(7).fill(' '));
+              currentPlayer = 0;
+              startGame();
+            } else {
+              console.log("Thank you for playing! Goodbye.");
+              rl.close();
+            }
+          });
+        }
+
+        function startGame() {
+          promptForPlayerName(0, function (name) {
+            players.push(name);
+            promptForPlayerName(1, function (name) {
+              players.push(name);
+              console.log(`Welcome, ${players[0]} and ${players[1]}! Let's start the game.`);
+              playerMove();
+            });
+          });
+        }
+
+        startGame();
